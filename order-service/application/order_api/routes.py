@@ -1,9 +1,15 @@
 # application/order_api/routes.py
 from flask import jsonify, request, make_response
+from sqlalchemy.orm import joinedload
 from . import order_api_blueprint
 from .. import db
 from ..models import Order, OrderItem
 from .api.UserClient import UserClient
+
+import sys, os
+sys.path.insert(0, os.path.abspath('..'))
+
+from frontend.application.frontend.api.ProductClient import ProductClient
 
 
 @order_api_blueprint.route('/api/orders', methods=['GET'])
@@ -11,7 +17,6 @@ def orders():
     items = []
     for row in Order.query.all():
         items.append(row.to_json())
-
     response = jsonify(items)
     return response
 
@@ -53,6 +58,31 @@ def order_add_item():
     db.session.add(known_order)
     db.session.commit()
     response = jsonify({'result': known_order.to_json()})
+    return response
+
+
+@order_api_blueprint.route('/api/cart', methods=['GET'])
+def cart():
+    api_key = request.headers.get('Authorization')
+
+    response = UserClient.get_user(api_key)
+
+    if not response:
+        return make_response(jsonify({'message': 'Not logged in'}), 401)
+
+    user = response['result']
+    open_order = Order.query.filter_by(user_id=user['id'], is_open=0).first()
+    print(open_order)
+    if open_order is None:
+        print("not found")
+        response = jsonify({'result': {'items':[]}})
+    else:
+        print("found")
+        order = open_order.to_json()
+        print(order)
+        for item in order['items']:
+            item['product'] = ProductClient.get_product_by_id(str(item['product']))['result']
+    response = jsonify({'result':  order})
     return response
 
 

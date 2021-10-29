@@ -14,10 +14,12 @@
                         <li><a href="/admin">Dashboard</a></li>
                         <li><a href="/logout">Logout</a></li>
                     {% else %}
+                    <li><a href="/cart">My Cart </a></li>
+                    <li><a href="/order">My Orders</a></li>    
+                    <!-- <li><a href="/checkout">Checkout <span class="badge">{{ count_items() }}</span></a></li> -->
                         <li><a href="/logout">Logout</a></li>
                     {% endif %}
                 {% endif %}
-                <li><a href="/checkout">Checkout <span class="badge">{{ count_items() }}</span></a></li>
             </ul>
         </div>
     </nav>

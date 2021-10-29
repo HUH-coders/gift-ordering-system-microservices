@@ -3,16 +3,23 @@
 {% block title %}Login{% endblock %}
 
 {% block pageContent %}
-    <h1>Login</h1>
+    <div style="text-align: center;">
+    <div style="height: 350px; width: 400px;margin-left: 35%; background-color: rgb(180, 197, 197); padding: 3%; border-radius: 5px;">
+        <h1>Login</h1> <br>
+
     <strong>{{ message }}</strong>
     <!-- Login form -->
     <form method="post">
     {{ form.hidden_tag() }}
     {{ render_field(form.username) }}
     {{ render_field(form.password) }}
+    <div style="margin-right: 40%;">
     {{ form.submit(class_="btn btn-success pull-right") }}
+    </div>
 
 
     </form>
+    </div>
+    </div>
 
 {% endblock %}

@@ -69,6 +69,7 @@ def login():
                 user = UserClient.get_user()
                 session['user'] = user['result']
 
+                
                 order = OrderClient.get_order()
                 if order.get('result', False):
                     session['order'] = order['result']
@@ -103,7 +104,38 @@ def product(slug):
         session['order'] = order['result']
         flash('Order has been updated', 'success')
     return render_template('product/index.html', product=item, form=form)
+    
+@frontend_blueprint.route('/order', methods=['GET'])
+def order():
+    if current_user.is_authenticated:
+        session['order'] = OrderClient.get_order_from_session()
 
+    try:
+        orders = OrderClient.get_order()
+    except requests.exceptions.ConnectionError:
+        orders = {
+            'results': []
+        }
+
+    return render_template('order/orders.html', orders=orders)
+
+
+@frontend_blueprint.route('/cart', methods=['GET'])
+def cart():
+    if current_user.is_authenticated:
+        session['order'] = OrderClient.get_order_from_session()
+
+    try:
+        cart_items = OrderClient.get_cart()
+    except requests.exceptions.ConnectionError:
+        cart_items = {'result': {'items':[]}}
+    
+    # product_ids= []
+    # products = []
+    # for item in cart_items:
+    #     x = item.
+    #     product_ids.append()
+    return render_template('order/cart.html', cart_items=cart_items['result']['items'])
 
 @frontend_blueprint.route('/checkout', methods=['GET'])
 def summary():
@@ -138,3 +170,4 @@ def thank_you():
     flash('Thank you for your order', 'success')
 
     return render_template('order/thankyou.html')
+

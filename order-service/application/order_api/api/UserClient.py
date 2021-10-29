@@ -8,7 +8,7 @@ class UserClient:
         headers = {
             'Authorization': api_key
         }
-        response = requests.request(method="GET", url='http://192.168.0.101:5001/api/user', headers=headers)
+        response = requests.request(method="GET", url='http://192.168.43.248:5001/api/user', headers=headers)
         if response.status_code == 401:
             return False
         user = response.json()

@@ -2,17 +2,31 @@
 from flask import session
 import requests
 
-
 class OrderClient:
     @staticmethod
     def get_order():
         headers = {
             'Authorization': 'Basic ' + session['user_api_key']
         }
-        url = 'http://192.168.0.101:5003/api/order'
+        url = 'http://192.168.43.248:5003/api/order'
         response = requests.request(method="GET", url=url, headers=headers)
-        order = response.json()
+        order = {}
+        try:
+            order = response.json()
+        except:
+            print("Order not found!")
         return order
+
+    @staticmethod
+    def get_cart():
+        headers = {
+            'Authorization': 'Basic ' + session['user_api_key']
+        }
+        url = 'http://192.168.43.248:5003/api/cart'
+        response = requests.request(method="GET", url=url, headers=headers)
+        cart_items = response.json()
+        print(cart_items)
+        return cart_items
 
     @staticmethod
     def post_add_to_cart(product_id, qty=1):
@@ -20,7 +34,7 @@ class OrderClient:
             'product_id': product_id,
             'qty': qty
         }
-        url = 'http://192.168.0.101:5003/api/order/add-item'
+        url = 'http://192.168.43.248:5003/api/order/add-item'
 
         headers = {
             'Authorization': 'Basic ' + session['user_api_key']
@@ -32,7 +46,7 @@ class OrderClient:
 
     @staticmethod
     def post_checkout():
-        url = 'http://192.168.0.101:5003/api/order/checkout'
+        url = 'http://192.168.43.248:5003/api/order/checkout'
 
         headers = {
             'Authorization': 'Basic ' + session['user_api_key']
