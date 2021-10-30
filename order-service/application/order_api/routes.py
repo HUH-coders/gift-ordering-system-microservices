@@ -6,10 +6,9 @@ from .. import db
 from ..models import Order, OrderItem
 from .api.UserClient import UserClient
 
-import sys, os
+import sys
+import os
 sys.path.insert(0, os.path.abspath('..'))
-
-from frontend.application.frontend.api.ProductClient import ProductClient
 
 
 @order_api_blueprint.route('/api/orders', methods=['GET'])
@@ -63,31 +62,7 @@ def order_add_item():
 
 @order_api_blueprint.route('/api/cart', methods=['GET'])
 def cart():
-    api_key = request.headers.get('Authorization')
-
-    response = UserClient.get_user(api_key)
-
-    if not response:
-        return make_response(jsonify({'message': 'Not logged in'}), 401)
-
-    user = response['result']
-    open_order = Order.query.filter_by(user_id=user['id'], is_open=0).first()
-    print(open_order)
-    if open_order is None:
-        print("not found")
-        response = jsonify({'result': {'items':[]}})
-    else:
-        print("found")
-        order = open_order.to_json()
-        print(order)
-        for item in order['items']:
-            item['product'] = ProductClient.get_product_by_id(str(item['product']))['result']
-    response = jsonify({'result':  order})
-    return response
-
-
-@order_api_blueprint.route('/api/order', methods=['GET'])
-def order():
+    from frontend.application.frontend.api.ProductClient import ProductClient
     api_key = request.headers.get('Authorization')
 
     response = UserClient.get_user(api_key)
@@ -97,11 +72,43 @@ def order():
 
     user = response['result']
     open_order = Order.query.filter_by(user_id=user['id'], is_open=1).first()
+    if open_order is None:
+        response = jsonify({'result': {'items': []}})
+    else:
+        order = open_order.to_json()
+        for item in order['items']:
+            item['product'] = ProductClient.get_product_by_id(str(item['product']))[
+                'result']
+        response = jsonify({'result':  order})
+    return response
+
+
+@order_api_blueprint.route('/api/order', methods=['GET'])
+def order():
+    from frontend.application.frontend.api.ProductClient import ProductClient
+    api_key = request.headers.get('Authorization')
+
+    response = UserClient.get_user(api_key)
+
+    if not response:
+        return make_response(jsonify({'message': 'Not logged in'}), 401)
+
+    user = response['result']
+    open_order = Order.query.filter_by(user_id=user['id'], is_open=0).all()
 
     if open_order is None:
-        response = jsonify({'message': 'No order found'})
+        response = jsonify({'result': {'items': []}})
     else:
-        response = jsonify({'result': open_order.to_json()})
+        res = []
+        for orders in open_order:
+            order = orders.to_json()
+            order['products'] = order['items'].copy()
+            del order['items']
+            for item in order['products']:
+                item['product'] = ProductClient.get_product_by_id(str(item['product']))[
+                    'result']
+            res.append(order)
+    response = jsonify({'result':  res})
     return response
 
 

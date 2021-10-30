@@ -2,35 +2,46 @@
 {% block title %}My Orders {% endblock %}
 
 {% block pageContent %}
+{% if orders | length > 0 %}
 
-{% if products | length > 0 %}
-    {% for item in order %}
+{% for order in orders %}
 
-{% set url = "/product/" + product.slug %}
 
 <div class="col-md-4">
     <div class="panel panel-default">
         <div class="panel-heading" style="text-align: center;">
-            <h2 class="panel-title">{{ item.id }}</h2>
+            {{order.id}}
         </div>
+
+
+        {% for product in order.products %}
+        {% set url = "/product/" + product.product.slug %}
+
         <div class="panel-body">
-            <div class="img-block">
-                <img src={{ orders.image }} width="200" height="200"/>
+            <div class="panel panel-default">
+                <div class="panel-heading" style="text-align: center;">
+                    <a href="{{url}}">
+                        <h2 class="panel-title">{{ product.product.name }}</h2>
+                    </a>
+                </div>
+                <div class="panel-body">
+                    <div class="label label-info"
+                        style="padding: 5px; font-size: large; margin-left: 20px; margin-right: 10px;">Price: {{
+                        product.product.price }} Rs</div>
+                    <div class="label label-warning" style="padding: 5px; font-size: large;">Quantity: {{
+                        product.quantity }}</div>
+                </div>
             </div>
         </div>
-        <div class="panel-footer">
-            <div class="container">
-                <div class="label label-info" style="padding: 5px; font-size: large;">Price: {{ orders.price }} Rs</div> 
-                    <a class="btn btn-success" href="{{ url }}" style="margin-left: 80px;">View more</a>
-            </div>
-        </div>
+        <br>
+        {% endfor%}
     </div>
 </div>
 {% endfor %}
 
-    {% else %}
-        <strong>No products found.</strong>
-    {% endif %}
+{% else %}
+<strong>No products found.</strong>
+{% endif %}
 
 
 {% endblock %}

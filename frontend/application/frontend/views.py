@@ -69,7 +69,6 @@ def login():
                 user = UserClient.get_user()
                 session['user'] = user['result']
 
-                
                 order = OrderClient.get_order()
                 if order.get('result', False):
                     session['order'] = order['result']
@@ -104,7 +103,8 @@ def product(slug):
         session['order'] = order['result']
         flash('Order has been updated', 'success')
     return render_template('product/index.html', product=item, form=form)
-    
+
+
 @frontend_blueprint.route('/order', methods=['GET'])
 def order():
     if current_user.is_authenticated:
@@ -112,12 +112,10 @@ def order():
 
     try:
         orders = OrderClient.get_order()
+        # print(type(orders['result'][0]['items'][0]['product']['id']))
     except requests.exceptions.ConnectionError:
-        orders = {
-            'results': []
-        }
-
-    return render_template('order/orders.html', orders=orders)
+        orders = {'result': []}
+    return render_template('order/orders.html', orders=orders['result'])
 
 
 @frontend_blueprint.route('/cart', methods=['GET'])
@@ -128,14 +126,9 @@ def cart():
     try:
         cart_items = OrderClient.get_cart()
     except requests.exceptions.ConnectionError:
-        cart_items = {'result': {'items':[]}}
-    
-    # product_ids= []
-    # products = []
-    # for item in cart_items:
-    #     x = item.
-    #     product_ids.append()
+        cart_items = {'result': {'items': []}}
     return render_template('order/cart.html', cart_items=cart_items['result']['items'])
+
 
 @frontend_blueprint.route('/checkout', methods=['GET'])
 def summary():
@@ -146,7 +139,7 @@ def summary():
     if 'order' not in session:
         flash('No order found', 'error')
         return redirect(url_for('frontend.home'))
-    order = OrderClient.get_order()
+    order = OrderClient.get_cart()
 
     if len(order['result']['items']) == 0:
         flash('No order found', 'error')
@@ -155,6 +148,7 @@ def summary():
     OrderClient.post_checkout()
 
     return redirect(url_for('frontend.thank_you'))
+
 
 @frontend_blueprint.route('/order/thank-you', methods=['GET'])
 def thank_you():
@@ -170,4 +164,3 @@ def thank_you():
     flash('Thank you for your order', 'success')
 
     return render_template('order/thankyou.html')
-

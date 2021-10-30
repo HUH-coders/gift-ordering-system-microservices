@@ -1,10 +1,15 @@
+{% from "macros/_macros_basket.html" import count_items %}
 {% extends "base_col_1.html" %}
 {% block title %}My Cart {% endblock %}
 
 {% block pageContent %}
 
 {% if cart_items | length > 0 %}
-    {% for item in cart_items %}
+
+<div style="text-align: right; font-size: large;"><a href="/checkout"><button class="btn-success">Checkout
+            <span class="badge">{{count_items()
+                }}</span></button> </a></div><br>
+{% for item in cart_items %}
 
 {% set url = "/product/" + item.product.slug %}
 
@@ -12,25 +17,30 @@
 <div class="col-md-4">
     <div class="panel panel-default">
         <div class="panel-heading" style="text-align: center;">
-            <h2 class="panel-title">{{ item.product.name }}</h2>
+            <a href="{{url}}">
+                <h2 class="panel-title">{{ item.product.name }}</h2>
+            </a>
         </div>
         <div class="panel-body">
             <div class="img-block">
-                <img src={{ item.product.image }} width="200" height="200"/>
+                <img src={{ item.product.image }} width="200" height="200" />
             </div>
         </div>
         <div class="panel-footer">
-                <!-- <div class="label label-info" style="padding: 5px; font-size: large;">Price: {{ item.product.price }} Rs</div>  -->
-                <div class="label label-warning" style="padding: 5px; font-size: large;">Quantity: {{ item.quantity }}</div> 
-                    <a class="btn btn-success" href="{{url}}" style="margin-left: 80px;">View more</a>
+            <div class="label label-info"
+                style="padding: 5px; font-size: large; margin-left: 20px; margin-right: 50px;">Price: {{
+                item.product.price }} Rs</div>
+            <div class="label label-warning" style="padding: 5px; font-size: large;">Quantity: {{ item.quantity }}
+            </div>
+            <br>
         </div>
     </div>
 </div>
 {% endfor %}
 
-    {% else %}
-        <strong>No items added.</strong>
-    {% endif %}
+{% else %}
+<strong>No items added.</strong>
+{% endif %}
 
 
 {% endblock %}
