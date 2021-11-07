@@ -98,3 +98,5 @@ def get_user():
         return make_response(jsonify({'result': current_user.to_json()}))
 
     return make_response(jsonify({'message': 'Not logged in'})), 401
+
+

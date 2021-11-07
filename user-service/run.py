@@ -1,7 +1,9 @@
 # run.py
+from flask.json import jsonify
 from application import create_app, db
-from application import models
 from flask_migrate import Migrate
+from application.models import User
+
 
 app = create_app()
 migrate = Migrate(app, db)
@@ -28,5 +30,10 @@ def user_loaded_from_header(self, user=None):
     g.login_via_header = True
 
 
+@app.route("/")
+def home():
+    return "User Service"
+
+
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5001)
+    app.run(host='0.0.0.0', port=5001, debug=True)
