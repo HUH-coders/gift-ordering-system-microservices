@@ -9,7 +9,7 @@ class OrderClient:
         headers = {
             'Authorization': 'Basic ' + session['user_api_key']
         }
-        url = 'http://192.168.0.104:5003/api/order'
+        url = 'http://192.168.0.108:5003/api/order'
         response = requests.request(method="GET", url=url, headers=headers)
         order = {}
         try:
@@ -23,10 +23,9 @@ class OrderClient:
         headers = {
             'Authorization': 'Basic ' + session['user_api_key']
         }
-        url = 'http://192.168.0.104:5003/api/cart'
+        url = 'http://192.168.0.108:5003/api/cart'
         response = requests.request(method="GET", url=url, headers=headers)
         cart_items = response.json()
-        print(cart_items)
         return cart_items
 
     @staticmethod
@@ -35,7 +34,7 @@ class OrderClient:
             'product_id': product_id,
             'qty': qty
         }
-        url = 'http://192.168.0.104:5003/api/order/add-item'
+        url = 'http://192.168.0.108:5003/api/order/add-item'
 
         headers = {
             'Authorization': 'Basic ' + session['user_api_key']
@@ -48,7 +47,7 @@ class OrderClient:
 
     @staticmethod
     def post_checkout():
-        url = 'http://192.168.0.104:5003/api/order/checkout'
+        url = 'http://192.168.0.108:5003/api/order/checkout'
 
         headers = {
             'Authorization': 'Basic ' + session['user_api_key']
